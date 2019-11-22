@@ -2417,7 +2417,7 @@ ORDER BY gt.{$section_key}", $params);
      * this function.
      *
      * @param string $user_id
-     * @param string $unarchived set to false to retrieve archived courses.0
+     * @param boolean $unarchived set to false to retrieve archived courses.
      * @return array - (un)archived courses (and their details) accessible by $user_id
      */
     public function getUnarchivedCoursesById($user_id, $unarchived = true) {
