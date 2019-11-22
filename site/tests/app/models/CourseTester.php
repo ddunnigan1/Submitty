@@ -24,7 +24,7 @@ class CourseTester extends BaseUnitTest {
 
         $array = [
             'semester' => 's18',
-            'semester_name' => 'Spring 2018';
+            'semester_name' => 'Spring 2018',
             'title' => 'csci1000',
             'display_name' => '',
             'modified' => false
