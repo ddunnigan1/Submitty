@@ -15,13 +15,13 @@ use app\libraries\FileUtils;
   */
 class Course extends AbstractModel {
 
-    /** @property string the semester (or term) code in which the course is taking place. */
+    /** @property string $semester the semester (or term) code in which the course is taking place. */
     protected $semester;
-    /** @property string the name of the semester (or term). aka "Long Semester". */
+    /** @property string $semester_name the name of the semester (or term). aka "Long Semester". */
     protected $semester_name;
-    /** @property string the proper title of the course. */
+    /** @property string $title the proper title of the course. */
     protected $title;
-    /** @property string the display name of the course */
+    /** @property string $display_name the display name of the course */
     protected $display_name;
 
     /**
