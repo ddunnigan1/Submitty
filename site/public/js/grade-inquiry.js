@@ -23,8 +23,7 @@ function onComponentTabClicked(tab) {
   $(".grade-inquiry").each(function(){
     if ($(this).data("component_id") !== component_id) {
       $(this).hide();
-    }
-    else {
+    } else {
       $(this).show();
     }
   });

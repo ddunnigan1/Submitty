@@ -36,3 +36,5 @@ Pipfile
 Pipfile.lock
 composer.lock
 .phpunit.result.cache
+*.lock
+*.lock

@@ -63,10 +63,9 @@ class PostgresqlDatabase extends AbstractDatabase {
     public function fromDatabaseToPHPArray($text, $parse_bools = false, $start = 0, &$end = null) {
         $text = trim($text);
 
-        if (empty($text) || $text[0] != "{") {
+        if(empty($text) || $text[0] != "{") {
             return array();
-        }
-        elseif (is_string($text)) {
+        } elseif(is_string($text)) {
             $return = array();
             $element = "";
             $in_string = false;
@@ -94,12 +93,10 @@ class PostgresqlDatabase extends AbstractDatabase {
                     if ($text[$i + 1] === "\\") {
                         $element .= "\\";
                         $i++;
-                    }
-                    elseif ($text[$i + 1] === "\"") {
+                    } elseif ($text[$i + 1] === "\"") {
                         $element .= "\"";
                         $i++;
-                    }
-                    else {
+                    } else {
                         $element .= $text[$i];
                     }
                 }
@@ -132,10 +129,10 @@ class PostgresqlDatabase extends AbstractDatabase {
      * Method that given an element figures out how to add it to the $return array whether it's a string, a numeric,
      * a null, a boolean, or an unquoted string
      *
-     * @param int|string $element     element to analyze
-     * @param bool       $have_string do we have a quoted element (using either ' or " characters around the string)
-     * @param bool       $parse_bools set to true to convert "true"/"false" to booleans instead of strings
-     * @param array      $return     this is the array being built to contain the parsed PG array
+     * @param string $element     element to analyze
+     * @param bool   $have_string do we have a quoted element (using either ' or " characters around the string)
+     * @param bool   $parse_bools set to true to convert "true"/"false" to booleans instead of strings
+     * @param array  &$return     this is the array being built to contain the parsed PG array
      */
     private function parsePGArrayValue($element, $have_string, $parse_bools, &$return) {
         if ($have_string) {
@@ -195,7 +192,8 @@ class PostgresqlDatabase extends AbstractDatabase {
                 $elements[] = "{$e}";
             }
         }
-        return "{" . implode(", ", $elements) . "}";
+        $text = "{" . implode(", ", $elements) . "}";
+        return $text;
     }
 
     public function convertBoolean($value) {

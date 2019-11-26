@@ -98,8 +98,7 @@ function ajaxGetGradeableRubric(gradeable_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong fetching the gradeable rubric: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -148,8 +147,7 @@ function ajaxSaveComponent(gradeable_id, component_id, title, ta_comment, studen
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the component: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -177,8 +175,7 @@ function ajaxGetComponentRubric(gradeable_id, component_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong fetching the component rubric: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -206,8 +203,7 @@ function ajaxGetGradedGradeable(gradeable_id, anon_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong fetching the gradeable grade: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -236,8 +232,7 @@ function ajaxGetGradedComponent(gradeable_id, component_id, anon_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong fetching the component grade: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     // null is not the same as undefined, so we need to make that conversion before resolving
                     if(response.data === null) {
                         response.data = undefined;
@@ -285,8 +280,7 @@ function ajaxSaveGradedComponent(gradeable_id, component_id, anon_id, graded_ver
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the component grade: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -315,8 +309,7 @@ function ajaxGetOverallComment(gradeable_id, anon_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong fetching the gradeable comment: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -351,8 +344,7 @@ function ajaxSaveOverallComment(gradeable_id, anon_id, overall_comment) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the overall comment: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -390,8 +382,7 @@ function ajaxAddNewMark(gradeable_id, component_id, title, points, publish) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong adding a new mark: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -425,8 +416,7 @@ function ajaxDeleteMark(gradeable_id, component_id, mark_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong deleting the mark: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -466,8 +456,7 @@ function ajaxSaveMark(gradeable_id, component_id, mark_id, title, points, publis
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the mark: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -501,8 +490,7 @@ function ajaxGetMarkStats(gradeable_id, component_id, mark_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong getting mark stats: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -536,8 +524,7 @@ function ajaxSaveMarkOrder(gradeable_id, component_id, order) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the mark order: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -569,8 +556,7 @@ function ajaxSaveComponentPages(gradeable_id, pages) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the component pages: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -602,8 +588,7 @@ function ajaxSaveComponentOrder(gradeable_id, order) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong saving the component order: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -633,8 +618,7 @@ function ajaxAddComponent(gradeable_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong adding the component: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data)
                 }
             },
@@ -666,8 +650,7 @@ function ajaxDeleteComponent(gradeable_id, component_id) {
                 if (response.status !== 'success') {
                     console.error('Something went wrong deleting the component: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data);
                 }
             },
@@ -701,8 +684,7 @@ function ajaxVerifyComponent(gradeable_id, component_id, anon_id) {
                 if (response.status !== "success") {
                     console.error('Something went wrong verifying the component: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data);
                 }
             },
@@ -735,8 +717,7 @@ function ajaxVerifyAllComponents(gradeable_id, anon_id) {
                 if (response.status !== "success") {
                     console.error('Something went wrong verifying the all components: ' + response.message);
                     reject(new Error(response.message));
-                }
-                else {
+                } else {
                     resolve(response.data);
                 }
             },
@@ -946,8 +927,7 @@ function setComponentInProgress(component_id, show = true) {
     domElement.find('.save-tools span').hide();
     if (show) {
         domElement.find('.save-tools-in-progress').show();
-    }
-    else {
+    } else {
         domElement.find('.save-tools :not(.save-tools-in-progress)').show();
     }
 }
@@ -961,8 +941,7 @@ function setOverallCommentInProgress(show = true) {
     domElement.find('.save-tools span').hide();
     if (show) {
         domElement.find('.save-tools-in-progress').show();
-    }
-    else {
+    } else {
         domElement.find('.save-tools :not(.save-tools-in-progress)').show();
     }
 }
@@ -1059,8 +1038,7 @@ function setRubricTotalBoxContents(contents) {
 function getCountDirection(component_id) {
     if (getComponentJQuery(component_id).find('input.count-up-selector').is(':checked')) {
         return COUNT_DIRECTION_UP;
-    }
-    else {
+    } else {
         return COUNT_DIRECTION_DOWN;
     }
 }
@@ -1096,8 +1074,7 @@ function getComponentPageNumber(component_id) {
     let domElement = getComponentJQuery(component_id);
     if (isInstructorEditEnabled()) {
         return parseInt(domElement.find('input.page-number').val());
-    }
-    else {
+    } else {
         return parseInt(domElement.attr('data-page'));
     }
 }
@@ -1181,8 +1158,7 @@ function getMarkFromDOM(mark_id) {
             deleted: domElement.hasClass('mark-deleted'),
             publish: domElement.find('.mark-publish-container input[type=checkbox]').is(':checked')
         };
-    }
-    else {
+    } else {
         if (mark_id === 0) {
             return null;
         }
@@ -1220,8 +1196,7 @@ function getGradedComponentFromDOM(component_id) {
         let mark_id = parseInt($(this).attr('data-mark_id'));
         if (mark_id === CUSTOM_MARK_ID) {
             customMarkSelected = true;
-        }
-        else {
+        } else {
             mark_ids.push(mark_id);
         }
     });
@@ -1233,8 +1208,7 @@ function getGradedComponentFromDOM(component_id) {
         score = parseFloat(customMarkDOMElement.attr('data-score'));
         comment = customMarkDOMElement.attr('data-comment');
         customMarkSelected = customMarkDOMElement.attr('data-selected') === 'true'
-    }
-    else {
+    } else {
         score = parseFloat(customMarkContainer.find('input[type=number]').val());
         comment = customMarkContainer.find('textarea').val();
     }
@@ -1358,8 +1332,7 @@ function getOverallCommentFromDOM() {
 
     if (editComment.length > 0) {
         return editComment.val();
-    }
-    else if (editComment.length > 0) {
+    } else if (editComment.length > 0) {
         return staticComment.html();
     }
     return '';
@@ -1621,8 +1594,7 @@ function anyUnverifiedComponents() {
 function updateVerifyAllButton() {
     if (!anyUnverifiedComponents()) {
         $('#verify-all').hide();
-    }
-    else {
+    } else {
         $('#verify-all').show();
     }
 }
@@ -1647,8 +1619,7 @@ function setCustomMarkError(component_id, show_error) {
     if (show_error) {
         jquery.addClass(c);
         jquery.prop('title', 'Custom mark cannot be blank!');
-    }
-    else {
+    } else {
         jquery.removeClass(c);
         jquery.prop('title', '');
     }
@@ -1770,8 +1741,7 @@ function importComponentsFromFile() {
             if (response.status !== 'success') {
                 console.error('Something went wrong importing components: ' + response.message);
                 reject(new Error(response.message));
-            }
-            else {
+            } else {
                 location.reload();
             }
         },
@@ -1958,8 +1928,7 @@ function onToggleEditMode(me) {
 
     if (open_component_ids.length !== 0) {
         reopen_component_id = open_component_ids[0];
-    }
-    else {
+    } else {
         updateEditModeEnabled();
         disableEditModeBox(false);
         return;
@@ -2047,8 +2016,7 @@ function onComponentPointsChange(me) {
                 console.error(err);
                 alert('Failed to refresh component! ' + err.message);
             });
-    }
-    else {
+    } else {
 
         // Make box red to indicate error
         $(me).css("background-color", "#ff7777");
@@ -2331,8 +2299,7 @@ function toggleComponent(component_id, saveChanges) {
         action = action.then(function() {
             return closeComponent(component_id, saveChanges);
         });
-    }
-    else {
+    } else {
         action = action.then(function () {
             return closeAllComponents(saveChanges)
                 .then(function () {
@@ -2391,8 +2358,7 @@ function addNewMark(component_id) {
         promise = promise.then(function () {
             return injectGradingComponent(component, graded_component, true, true);
         });
-    }
-    else {
+    } else {
         promise = promise.then(function () {
             return injectInstructorEditComponent(component, true);
         });
@@ -2420,8 +2386,7 @@ function updateCustomMark(component_id) {
 
         // Uncheck the first mark just in case it's checked
         return unCheckFirstMark(component_id);
-    }
-    else {
+    } else {
         // Automatically uncheck the custom mark if it's no longer relevant
         unCheckDOMCustomMark(component_id);
 
@@ -2439,8 +2404,7 @@ function toggleCustomMark(component_id) {
     if (isCustomMarkChecked(component_id)) {
         // Uncheck the first mark just in case it's checked
         return unCheckFirstMark(component_id);
-    }
-    else {
+    } else {
         // Note: this is in the else block since `unCheckFirstMark` calls this function
         return refreshGradedComponent(component_id, true);
     }
@@ -2495,8 +2459,7 @@ function scrollToPage(page_num){
                 if(page.length) {
                     $('#file_content').animate({scrollTop: page[0].offsetTop}, 500);
                 }
-            }
-            else {
+            } else {
                 expandFile("upload.pdf", files[i].getAttribute("file-url"), page_num-1);
             }
         }
@@ -2633,8 +2596,7 @@ function closeOverallComment(saveChanges = true) {
             .then(function () {
                 return refreshOverallComment(false);
             });
-    }
-    else {
+    } else {
         return ajaxGetOverallComment(getGradeableId(), getAnonId())
             .then(function (comment) {
                 return injectOverallComment(comment, false);
@@ -2795,13 +2757,11 @@ function tryResolveMarkSave(gradeable_id, component_id, domMark, serverMark, old
             if ((marksEqual(domMark, serverMark) || marksEqual(domMark, oldServerMark)) && !markDeleted) {
                 // If the domMark is not unique, then we don't need to do anything
                 return Promise.resolve(true);
-            }
-            else if (!marksEqual(serverMark, oldServerMark)) {
+            } else if (!marksEqual(serverMark, oldServerMark)) {
                 // The domMark is unique, and the serverMark is also unique,
                 // which means all 3 versions are different, which is a conflict state
                 return Promise.resolve(false);
-            }
-            else if (markDeleted) {
+            } else if (markDeleted) {
                 // domMark was deleted and serverMark hasn't changed from oldServerMark,
                 //  so try to delete the mark
                 return ajaxDeleteMark(gradeable_id, component_id, domMark.id)
@@ -2813,8 +2773,7 @@ function tryResolveMarkSave(gradeable_id, component_id, domMark, serverMark, old
                         // Success, then resolve success
                         return Promise.resolve(true);
                     });
-            }
-            else {
+            } else {
                 // The domMark is unique and the serverMark is the same as the oldServerMark
                 //  so we should save the domMark to the server
                 return ajaxSaveMark(gradeable_id, component_id, domMark.id, domMark.title, domMark.points, domMark.publish)
@@ -2823,26 +2782,22 @@ function tryResolveMarkSave(gradeable_id, component_id, domMark, serverMark, old
                         return Promise.resolve(true);
                     });
             }
-        }
-        else {
+        } else {
             // This means it was deleted from the server.
             if (!marksEqual(domMark, oldServerMark) && !markDeleted) {
                 // And the mark changed and wasn't deleted, which is a conflict state
                 return Promise.resolve(false);
-            }
-            else {
+            } else {
                 // And the mark didn't change or it was deleted, so don't do anything
                 return Promise.resolve(domMark.id);
             }
         }
-    }
-    else {
+    } else {
         // This means it didn't exist when we started editing, so serverMark must also be null
         if (markDeleted) {
             // The mark was marked for deletion, but never existed... so do nothing
             return Promise.resolve(true);
-        }
-        else {
+        } else {
             // The mark never existed and isn't deleted, so its new
             return ajaxAddNewMark(gradeable_id, component_id, domMark.title, domMark.points, domMark.publish)
                 .then(function (data) {
@@ -2893,8 +2848,7 @@ function gradedComponentsEqual(gcDOM, gcOLD) {
     // Since the custom mark can be unchecked with text / point value, treat unchecked as blank score / point values
     if (gcDOM.custom_mark_selected) {
         return gcDOM.score === gcOLD.score && gcDOM.comment === gcOLD.comment;
-    }
-    else {
+    } else {
         return gcOLD.score === 0.0 && gcOLD.comment === '';
     }
 }
@@ -2904,8 +2858,7 @@ function saveComponent(component_id) {
     if (isEditModeEnabled()) {
         // We're in edit mode, so save the component and fetch the up-to-date grade / rubric data
         return saveMarkList(component_id);
-    }
-    else {
+    } else {
         // The grader unchecked the custom mark, but didn't delete the text.  This shouldn't happen too often,
         //  so prompt the grader if this is what they really want since it will delete the text / score.
         let gradedComponent = getGradedComponentFromDOM(component_id);

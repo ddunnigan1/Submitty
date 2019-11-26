@@ -145,9 +145,10 @@ class FileUtils {
      * off the string.
      */
     public static function getAllFilesTrimSearchPath(string $search_path, int $path_length): array {
-        return array_map(function ($entry) use ($path_length) {
+        $files = array_map(function ($entry) use ($path_length) {
             return substr($entry['path'], $path_length, strlen($entry['path']) - $path_length);
         }, array_values(FileUtils::getAllFiles($search_path, [], true)));
+        return $files;
     }
 
     /**
@@ -243,7 +244,7 @@ class FileUtils {
             if ($handle = opendir($path)) {
                 while (false !== ($entry = readdir($handle))) {
                     $file = "{$path}/{$entry}";
-                    if (is_dir($file) && !in_array(strtolower($entry), $disallowed_folders)) {
+                    if(is_dir($file) && !in_array(strtolower($entry), $disallowed_folders)) {
                         $return[] = $entry;
                     }
                 }
@@ -311,10 +312,10 @@ class FileUtils {
      */
     public static function checkFileInZipName($zipname) {
         $zip = zip_open($zipname);
-        if (is_resource(($zip))) {
+        if(is_resource(($zip))) {
             while ($inner_file = zip_read($zip)) {
                 $fname = zip_entry_name($inner_file);
-                if (FileUtils::isValidFileName($fname) === false) {
+                if(FileUtils::isValidFileName($fname) === false) {
                     return false;
                 }
             }
@@ -335,13 +336,11 @@ class FileUtils {
         }
         else {
             foreach (str_split($filename) as $char) {
-                if (
-                    $char == "'"
-                    || $char == '"'
-                    || $char == "\\"
-                    || $char == "<"
-                    || $char == ">"
-                ) {
+                if ($char == "'" ||
+                    $char == '"' ||
+                    $char == "\\" ||
+                    $char == "<" ||
+                    $char == ">") {
                     return false;
                 }
             }
@@ -462,7 +461,7 @@ class FileUtils {
         $file_contents = @file_get_contents($file);
 
         // Check for failure
-        if ($file_contents == false) {
+        if($file_contents == false) {
             throw new FileReadException('Unable to either locate or read the file contents');
         }
 
@@ -472,7 +471,7 @@ class FileUtils {
         foreach ($words as $word) {
             $word_was_found = strpos($file_contents, $word);
 
-            if ($word_was_found) {
+            if($word_was_found) {
                 $words_detected = true;
                 break;
             }
@@ -511,7 +510,7 @@ class FileUtils {
 
             //manually check against set size limit
             //incase the max POST size is greater than max file size
-            if ($size > $max_size) {
+            if($size > $max_size){
                 $err_msg = "File \"" . $name . "\" too large got (" . Utils::formatBytes("mb", $size) . ")";
             }
 

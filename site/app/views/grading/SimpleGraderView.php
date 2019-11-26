@@ -33,8 +33,7 @@ class SimpleGraderView extends AbstractView {
         foreach ($gradeable->getComponents() as $component) {
             if ($component->isText()) {
                 $components_text[] = $component;
-            }
-            else {
+            } else {
                 $components_numeric[] = $component;
                 if ($action != 'lab') {
                     $comp_ids[] = $component->getId();
@@ -50,8 +49,7 @@ class SimpleGraderView extends AbstractView {
         foreach ($graded_gradeables as $graded_gradeable) {
             if ($gradeable->isGradeByRegistration()) {
                 $section = $graded_gradeable->getSubmitter()->getUser()->getRegistrationSection();
-            }
-            else {
+            } else {
                 $section = $graded_gradeable->getSubmitter()->getUser()->getRotatingSection();
             }
 

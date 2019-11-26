@@ -25,8 +25,7 @@ function updateHomeworkExtension() {
             }
             if (json['data'] && json['data']['is_team']) {
                 extensionPopup(json);
-            }
-            else {
+            } else {
                 window.location=window.location; // pseudo post/redirect/get pattern
             }
         },

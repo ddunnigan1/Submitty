@@ -3,8 +3,12 @@
 namespace app\controllers\admin;
 
 use app\controllers\AbstractController;
+use app\exceptions\FileReadException;
+use app\libraries\Core;
+use app\libraries\DateUtils;
 use app\libraries\FileUtils;
 use app\libraries\GradeableType;
+use app\libraries\Output;
 use app\libraries\routers\AccessControl;
 use app\models\gradeable\AutoGradedGradeable;
 use app\models\gradeable\Gradeable;
@@ -15,6 +19,7 @@ use app\models\gradeable\Mark;
 use app\models\gradeable\Submitter;
 use app\models\User;
 use Symfony\Component\Routing\Annotation\Route;
+use app\models\GradeSummary;
 use app\models\RainbowCustomization;
 use app\exceptions\ValidationException;
 
@@ -27,8 +32,6 @@ class ReportController extends AbstractController {
 
     const MAX_AUTO_RG_WAIT_TIME = 45;       // Time in seconds a call to autoRainbowGradesStatus should
                                             // wait for the job to complete before timing out and returning failure
-
-    private $all_overrides = [];
 
     /**
      * @Route("/{_semester}/{_course}/reports")
@@ -57,7 +60,7 @@ class ReportController extends AbstractController {
         $base_path = FileUtils::joinPaths($this->core->getConfig()->getCoursePath(), 'reports', 'all_grades');
 
         // Check that the directory is writable, fail if not
-        if (!is_writable($base_path)) {
+        if(!is_writable($base_path)) {
             $this->core->addErrorMessage('Unable to write to the grade summaries directory');
             $this->core->redirect($this->core->buildCourseUrl(['reports']));
         }
@@ -95,11 +98,13 @@ class ReportController extends AbstractController {
         $file_count = count($files) - 2;
 
         // If folder is empty return never
-        if ($file_count == 0) {
+        if($file_count == 0)
+        {
             return 'Never';
         }
-        else {
-            // Else folder has contents return the time stamp off the first file
+        // Else folder has contents return the time stamp off the first file
+        else
+        {
             // Get file modification time of first student json
             $time_stamp = filemtime($summaries_dir . '/' . $files[2]);
 
@@ -131,7 +136,7 @@ class ReportController extends AbstractController {
         ];
 
         // Generate the reports
-        $rows = $this->generateReportInternal($g_sort_keys, $gg_sort_keys, function (User $a, array $b, LateDays $c) {
+        $rows = $this->generateReportInternal($g_sort_keys, $gg_sort_keys, function ($a, $b, $c) {
             return $this->generateCSVRow($a, $b, $c);
         });
 
@@ -145,7 +150,6 @@ class ReportController extends AbstractController {
                 $csv .= implode(',', $row) . PHP_EOL;
             }
         }
-
         //Send csv data to file download.  Filename: "{course}_csvreport_{date/time stamp}.csv"
         $this->core->getOutput()->renderFile($csv, $this->core->getConfig()->getCourse() . "_csvreport_" . date("ymdHis") . ".csv");
     }
@@ -183,8 +187,7 @@ class ReportController extends AbstractController {
             $all_gradeables[] = $g;
             if ($g->isTeamAssignment()) {
                 $team_gradeables[] = $g;
-            }
-            else {
+            } else {
                 $user_gradeables[] = $g;
             }
         }
@@ -212,14 +215,10 @@ class ReportController extends AbstractController {
             /** @var Gradeable $g */
             if ($g->isTeamAssignment()) {
                 // if the user doesn't have a team, MAKE THE USER A SUBMITTER
-                $graded_gradeable = $team_graded_gradeables[$g->getId()][$user->getId()] ?? $this->genDummyGradedGradeable($g, new Submitter($this->core, $user));
+                $ggs[] = $team_graded_gradeables[$g->getId()][$user->getId()] ?? $this->genDummyGradedGradeable($g, new Submitter($this->core, $user));
+            } else {
+                $ggs[] = $user_graded_gradeables[$g->getId()];
             }
-            else {
-                $graded_gradeable = $user_graded_gradeables[$g->getId()];
-            }
-
-            $graded_gradeable->setOverriddenGrades($this->all_overrides[$graded_gradeable->getSubmitter()->getId()][$graded_gradeable->getGradeableId()] ?? null);
-            $ggs[] = $graded_gradeable;
         }
         return $ggs;
     }
@@ -237,26 +236,16 @@ class ReportController extends AbstractController {
         $results = [];
 
         // get all gradeables and cache team graded gradeables
-        [$all_gradeables, $user_gradeables, $team_gradeables] = $this->getSplitGradeables($gradeable_sort_keys);
+        list($all_gradeables, $user_gradeables, $team_gradeables) = $this->getSplitGradeables($gradeable_sort_keys);
         $team_graded_gradeables = $this->cacheTeamGradedGradeables($team_gradeables);
 
         //Gradeable iterator will append one gradeable score per loop pass.
         $user_graded_gradeables = [];
 
-        $all_late_days = [];
-        foreach ($this->core->getQueries()->getLateDayUpdates(null) as $row) {
-            if (!isset($all_late_days[$row['user_id']])) {
-                $all_late_days[$row['user_id']] = [];
-            }
-            $all_late_days[$row['user_id']][] = $row;
-        }
-
-        $this->all_overrides = $this->core->getQueries()->getAllOverriddenGrades();
-
         // Method to call the callback with the required parameters
-        $call_callback = function ($all_gradeables, User $current_user, $user_graded_gradeables, $team_graded_gradeables, $per_user_callback) use ($all_late_days) {
+        $call_callback = function ($all_gradeables, User $current_user, $user_graded_gradeables, $team_graded_gradeables, $per_user_callback) {
             $ggs = $this->mergeGradedGradeables($all_gradeables, $current_user, $user_graded_gradeables, $team_graded_gradeables);
-            $late_days = new LateDays($this->core, $current_user, $ggs, $all_late_days[$current_user->getId()] ?? []);
+            $late_days = new LateDays($this->core, $current_user, $ggs);
             return $per_user_callback($current_user, $ggs, $late_days);
         };
         foreach ($this->core->getQueries()->getGradedGradeables($user_gradeables, null, null, $graded_gradeable_sort_keys) as $gg) {
@@ -282,7 +271,7 @@ class ReportController extends AbstractController {
                 if (!isset($results[$u->getId()])) {
                     // This user had no results, so generate results
                     $ggs = $this->mergeGradedGradeables($all_gradeables, $u, [], $team_graded_gradeables);
-                    $late_days = new LateDays($this->core, $u, $ggs, $all_late_days[$u->getId()] ?? []);
+                    $late_days = new LateDays($this->core, $u, $ggs);
                     $results[$current_user->getId()] = $per_user_callback($u, $ggs, $late_days);
                 }
             }
@@ -315,14 +304,13 @@ class ReportController extends AbstractController {
             //Append one gradeable score to row.  Scores are indexed by gradeable's ID.
             $row[$gg->getGradeableId()] = $gg->getTotalScore();
 
-            if (!$gg->hasOverriddenGrades()) {
+            if (!$gg->hasOverriddenGrades()){
                 // Check if the score should be a zero
                 if ($gg->getGradeable()->getType() === GradeableType::ELECTRONIC_FILE) {
                     if ($gg->getGradeable()->isTaGrading() && ($gg->getOrCreateTaGradedGradeable()->hasVersionConflict() || !$gg->isTaGradingComplete())) {
                         // Version conflict or incomplete grading, so zero score
                         $row[$gg->getGradeableId()] = 0;
-                    }
-                    elseif ($late_days->getLateDayInfoByGradeable($gg->getGradeable())->getStatus() === LateDayInfo::STATUS_BAD) {
+                    } elseif ($late_days->getLateDayInfoByGradeable($gg->getGradeable())->getStatus() === LateDayInfo::STATUS_BAD) {
                         // BAD submission, so zero score
                         $row[$gg->getGradeableId()] = 0;
                     }
@@ -384,7 +372,7 @@ class ReportController extends AbstractController {
 
         $ldi = $ld->getLateDayInfoByGradeable($g);
 
-        if ($gg->hasOverriddenGrades()) {
+        if ($gg->hasOverriddenGrades()){
             $entry['status'] = 'Overridden';
             $entry['comment'] = $gg->getOverriddenComment();
         }
@@ -428,11 +416,9 @@ class ReportController extends AbstractController {
                         //  but to keep the rest of the report generation sane, they can be users if the
                         //  user is not on a team
                         $entry['note'] = 'User is not on a team';
-                    }
-                    elseif (!$ta_gg->isComplete()) {
+                    } elseif (!$ta_gg->isComplete()) {
                         $entry['note'] = 'This has not been graded yet.';
-                    }
-                    else {
+                    } else {
                         $entry['note'] = 'Score is set to 0 because there are version conflicts.';
                     }
                 }
@@ -459,8 +445,7 @@ class ReportController extends AbstractController {
                 ];
                 if ($component->isText()) {
                     $inner['comment'] = $gc !== null ? $gc->getComment() : '';
-                }
-                else {
+                } else {
                     $inner['score'] = $gc !== null ? $gc->getTotalScore() : 0.0;
                     $inner['default_score'] = $component->getDefault();
                     $inner['upper_clamp'] = $component->getUpperClamp();
@@ -505,8 +490,7 @@ class ReportController extends AbstractController {
             case LateDayInfo::STATUS_NO_ACTIVE_VERSION:
                 if ($ldi->getGradedGradeable()->getAutoGradedGradeable()->hasSubmission()) {
                     return 'Cancelled';
-                }
-                else {
+                } else {
                     return 'Unsubmitted';
                 }
             default:
@@ -522,24 +506,22 @@ class ReportController extends AbstractController {
         $customization = new RainbowCustomization($this->core);
         $customization->buildCustomization();
 
-        if (isset($_POST["json_string"])) {
+        if(isset($_POST["json_string"])){
             //Handle user input (the form) being submitted
             try {
                 $customization->processForm();
 
                 // Finally, send the requester back the information
                 $this->core->getOutput()->renderJsonSuccess("Successfully wrote customization.json file");
-            }
-            catch (ValidationException $e) {
+            } catch (ValidationException $e) {
                 //Use this to handle any invalid/inconsistent input exceptions thrown during processForm()
                 $this->core->getOutput()->renderJsonFail('See "data" for details', $e->getDetails());
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 //Catches any other exceptions, should be "unexpected" issues
                 $this->core->getOutput()->renderJsonError($e->getMessage());
             }
         }
-        else {
+        else{
             $this->core->getOutput()->addInternalJs('rainbow-customization.js');
             $this->core->getOutput()->addInternalCss('rainbow-customization.css');
 
@@ -581,7 +563,8 @@ class ReportController extends AbstractController {
         $max_wait_time = self::MAX_AUTO_RG_WAIT_TIME;
 
         // Check the jobs queue every second to see if the job has finished yet
-        while (file_exists($jobs_file) && $max_wait_time) {
+        while(file_exists($jobs_file) && $max_wait_time)
+        {
             sleep(1);
             $max_wait_time--;
             clearstatcache();
@@ -590,7 +573,8 @@ class ReportController extends AbstractController {
         // Jobs queue daemon actually changes the name of the job by prepending PROCESSING onto the filename
         // We must also wait for that file to be removed
         // Check the jobs queue every second to see if the job has finished yet
-        while (file_exists($processing_jobs_file) && $max_wait_time) {
+        while(file_exists($processing_jobs_file) && $max_wait_time)
+        {
             sleep(1);
             $max_wait_time--;
             clearstatcache();
@@ -603,10 +587,12 @@ class ReportController extends AbstractController {
             '/rainbow_grades/auto_debug_output.txt';
 
         // Look over the output file to see if any part of the process failed
-        try {
+        try
+        {
             $failure_detected = FileUtils::areWordsInFile($debug_output_path, ['Exception', 'Aborted', 'failed']);
         }
-        catch (\Exception $e) {
+        catch (\Exception $e)
+        {
             $failure_detected = true;
         }
 
@@ -614,11 +600,13 @@ class ReportController extends AbstractController {
 
         // If we finished the previous loops before max_wait_time hit 0 then the file successfully left the jobs queue
         // implying that it finished
-        if ($max_wait_time && $failure_detected == false) {
+        if ($max_wait_time && $failure_detected == false)
+        {
             $this->core->getOutput()->renderJsonSuccess($debug_contents);
         }
-        else {
-            // Else we timed out or something else went wrong
+        // Else we timed out or something else went wrong
+        else
+        {
             $this->core->getOutput()->renderJsonFail($debug_contents);
         }
     }

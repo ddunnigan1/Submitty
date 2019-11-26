@@ -180,14 +180,14 @@ class DiffViewer {
                 $this->actual_file_image = $actual_file;
             }
             else {
-                if (filesize($actual_file) < $size_limit) {
+                if(filesize($actual_file) < $size_limit){
                     $this->actual_file_name = $actual_file;
                     $this->actual = file_get_contents($actual_file);
                     $this->has_actual = trim($this->actual) !== "" ? true : false;
                     $this->actual = explode("\n", $this->actual);
                     $this->display_actual = true;
                 }
-                else {
+                else{
                     $this->actual_file_name = $actual_file;
                     $can_diff = false;
                     //load in the first sizelimit characters of the file (TEMP VALUE)
@@ -206,14 +206,14 @@ class DiffViewer {
             if (Utils::isImage($expected_file)) {
                 $this->expected_file_image = $expected_file;
             }
-            else {
-                if (filesize($expected_file) < $size_limit) {
+            else{
+                if(filesize($expected_file) < $size_limit){
                     $this->expected = file_get_contents($expected_file);
                     $this->has_expected = trim($this->expected) !== "" ? true : false;
                     $this->expected = explode("\n", $this->expected);
                     $this->display_expected = true;
                 }
-                else {
+                else{
                     $can_diff = false;
                     //load in the first sizelimit characters of the file (TEMP VALUE)
                     $this->expected = file_get_contents($expected_file, null, null, 0, $size_limit);
@@ -262,8 +262,7 @@ class DiffViewer {
                         $line_num = $line['line_number'];
                         if (isset($line['char_number'])) {
                             $this->diff[self::ACTUAL][$line_num] = $this->compressRange($line['char_number']);
-                        }
-                        else {
+                        } else {
                             $this->diff[self::ACTUAL][$line_num] = array();
                         }
                         $act_final = $line_num;
@@ -278,8 +277,7 @@ class DiffViewer {
                         $line_num = $line['line_number'];
                         if (isset($line['char_number'])) {
                             $this->diff[self::EXPECTED][$line_num] = $this->compressRange($line['char_number']);
-                        }
-                        else {
+                        } else {
                             $this->diff[self::EXPECTED][$line_num] = array();
                         }
                         $exp_final = $line_num;
@@ -474,17 +472,15 @@ class DiffViewer {
                     $test = str_replace("\0", "null", $html_orig);
                     $html_orig_error = htmlentities(substr($lines[$i], $diff[0], ($diff[1] - $diff[0] + 1)));
                     $test2 = str_replace("\0", "null", $html_orig_error);
-                    if ($option == self::SPECIAL_CHARS_ORIGINAL) {
+                    if($option == self::SPECIAL_CHARS_ORIGINAL){
                         $html .= $html_orig;
                         $html .= "<span class='highlight-char'>" . $html_orig_error . "</span>";
-                    }
-                    elseif ($option == self::SPECIAL_CHARS_UNICODE) {
+                    } elseif($option == self::SPECIAL_CHARS_UNICODE) {
                         $html_no_empty = $this->replaceEmptyChar($html_orig, false);
                         $html_no_empty_error = $this->replaceEmptyChar($html_orig_error, false);
                         $html .= $html_no_empty;
                         $html .= "<span class='highlight-char'>" . $html_no_empty_error . "</span>";
-                    }
-                    elseif ($option == self::SPECIAL_CHARS_ESCAPE) {
+                    } elseif($option == self::SPECIAL_CHARS_ESCAPE) {
                         $html_no_empty = $this->replaceEmptyChar($html_orig, true);
                         $html_no_empty_error = $this->replaceEmptyChar($html_orig_error, true);
                         $html .= $html_no_empty;
@@ -504,21 +500,18 @@ class DiffViewer {
             }
             else {
                 if (isset($lines[$i])) {
-                    if ($option == self::SPECIAL_CHARS_ORIGINAL) {
+                    if($option == self::SPECIAL_CHARS_ORIGINAL){
                         $html .= htmlentities($lines[$i]);
-                    }
-                    elseif ($option == self::SPECIAL_CHARS_UNICODE) {
+                    } elseif($option == self::SPECIAL_CHARS_UNICODE){
                         $html .= $this->replaceEmptyChar(htmlentities($lines[$i]), false);
-                    }
-                    elseif ($option == self::SPECIAL_CHARS_ESCAPE) {
+                    } elseif($option == self::SPECIAL_CHARS_ESCAPE){
                         $html .= $this->replaceEmptyChar(htmlentities($lines[$i]), true);
                     }
                 }
             }
-            if ($option == self::SPECIAL_CHARS_UNICODE) {
+            if($option == self::SPECIAL_CHARS_UNICODE) {
                 $html .= '<span class="whitespace">&#9166;</span>';
-            }
-            elseif ($option == self::SPECIAL_CHARS_ESCAPE) {
+            } elseif($option == self::SPECIAL_CHARS_ESCAPE) {
                 $html .= '<span class="whitespace">\\n</span>';
             }
             $html .= "</span></div>\n";
@@ -540,12 +533,13 @@ class DiffViewer {
                 $html .= "\t</div>\n";
             }
         }
-        return $html . "</div></div>\n";
+        $html .= "</div></div>\n";
+        return $html;
     }
 
     public function getWhiteSpaces() {
         $return = "";
-        foreach ($this->white_spaces as $key => $value) {
+        foreach($this->white_spaces as $key => $value){
             $return .= "$value" . " = " . "$key" . " ";
         }
         return $this->white_spaces;
@@ -561,13 +555,12 @@ class DiffViewer {
      */
     private function replaceEmptyChar($html, $with_escape) {
         $return = $html;
-        if ($with_escape) {
-            foreach (self::SPECIAL_CHARS_LIST as $name => $representations) {
+        if($with_escape){
+            foreach(self::SPECIAL_CHARS_LIST as $name => $representations){
                 $this->replaceUTF($representations[0], $representations[2], $return, $name);
             }
-        }
-        else {
-            foreach (self::SPECIAL_CHARS_LIST as $name => $representations) {
+        } else {
+            foreach(self::SPECIAL_CHARS_LIST as $name => $representations){
                 $this->replaceUTF($representations[0], $representations[1], $return, $name);
             }
         }
@@ -587,7 +580,7 @@ class DiffViewer {
         $count = 0;
         $what = '<span class="whitespace">' . $what . '</span>';
         $which = str_replace($text, $what, $which, $count);
-        if ($count > 0) {
+        if($count > 0) {
             $this->white_spaces[$description] = strip_tags($what);
         }
         return $what;
@@ -634,8 +627,8 @@ class DiffViewer {
     public function existsDifference() {
         $this->buildViewer();
         $return = false;
-        foreach (array(self::EXPECTED, self::ACTUAL) as $key) {
-            if (count($this->diff[$key]) > 0 || count($this->add[$key]) > 0) {
+        foreach(array(self::EXPECTED, self::ACTUAL) as $key) {
+            if(count($this->diff[$key]) > 0 || count($this->add[$key]) > 0) {
                 $return = true;
             }
         }

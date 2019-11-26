@@ -81,8 +81,7 @@ window.onbeforeunload = function() {
                     PDFAnnotate.UI.enableText();
                     break;
             }
-        }
-        else {
+        } else {
             //For color and size select
             switch(option){
                 case 'pen':
@@ -106,15 +105,12 @@ window.onbeforeunload = function() {
         let zoom_level = window.RENDER_OPTIONS.scale;
         if(option == 'in'){
             zoom_level += 0.1;
-        }
-        else if(option == 'out'){
+        } else if(option == 'out'){
             zoom_level -= 0.1;
-        }
-        else {
+        } else {
             if(custom_val != null){
                 zoom_level = custom_val/100;
-            }
-            else {
+            } else {
                 zoom_flag = false;
             }
             $('#zoom_selection').toggle();
@@ -158,8 +154,7 @@ window.onbeforeunload = function() {
                 if(response.status == "success"){
                     $('#save_status').text("Saved");
                     $('#save_status').css('color', 'black');
-                }
-                else {
+                } else {
                     alert(data.message);
                 }
             },
